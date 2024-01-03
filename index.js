@@ -9,8 +9,10 @@ import MagicString from 'magic-string';
  * @param {number} end
  */
 function wrap(mstr, start, end) {
-	const snip = mstr.snip(start, end).toString();
-	mstr.overwrite(start, end, `{#await Promise.resolve() then}${snip}{/await}`);
+	try {
+		const snip = mstr.snip(start, end).toString();
+		mstr.overwrite(start, end, `{#await Promise.resolve() then}${snip}{/await}`);
+	} catch {}
 }
 
 /**
@@ -64,6 +66,7 @@ function transform(value) {
 		);
 		return { code: new_val.toString(), map: new_val.generateMap() };
 	}
+	return;
 }
 
 /**
