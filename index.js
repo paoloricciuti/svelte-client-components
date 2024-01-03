@@ -44,16 +44,11 @@ function transform(value) {
 				VariableDeclaration(node) {
 					for (let declaration of node.declarations) {
 						if (declaration.init?.type === 'Identifier') {
-							if (declaration.id.type === 'Identifier') {
+							// only track the const declarations since let could be
+							// reassigned with a non client component
+							if (declaration.id.type === 'Identifier' && node.kind === 'const') {
 								variables.set(declaration.id.name, declaration.init.name);
 							}
-						}
-					}
-				},
-				AssignmentExpression(node) {
-					if (node.right.type === 'Identifier') {
-						if (node.left.type === 'Identifier') {
-							variables.set(node.left.name, node.right.name);
 						}
 					}
 				},
