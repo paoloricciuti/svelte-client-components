@@ -23,19 +23,39 @@ function wrap(mstr, start, end) {
 function transform(value) {
 	let new_val = new MagicString(value);
 	const parsed = parse(value);
+	/**
+	 * @type {Set<string>}
+	 */
 	const client_components = new Set();
+	/**
+	 * @type {Map<string, string>}
+	 */
+	const variable_declarations = new Map();
 
 	/**
 	 * @typedef {typeof parsed} Ast
 	 */
 	if (parsed.instance?.content) {
 		walk(
+			// this is to please ts, i think there's some problem with walk typing
 			/**@type {(Ast["instance"]&{})["content"]["body"][number]}*/ (
 				/** @type {unknown} */
 				(parsed.instance)
 			),
 			{},
 			{
+				VariableDeclaration(node) {
+					for (let declaration of node.declarations) {
+						if (declaration.init?.type === 'Identifier') {
+							if (declaration.id.type === 'Identifier') {
+								variable_declarations.set(
+									declaration.id.name,
+									declaration.init.name,
+								);
+							}
+						}
+					}
+				},
 				ImportDeclaration(node) {
 					const source = node?.source?.value;
 					if (typeof source === 'string' && source.includes?.('.client.svelte')) {
@@ -48,6 +68,11 @@ function transform(value) {
 				},
 			},
 		);
+		for (const [variable_declaration, identifier] of variable_declarations.entries()) {
+			if (client_components.has(identifier)) {
+				client_components.add(variable_declaration);
+			}
+		}
 		walk(
 			parsed.html,
 			{},
