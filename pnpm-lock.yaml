@@ -16,6 +16,9 @@ devDependencies:
   '@changesets/cli':
     specifier: ^2.27.1
     version: 2.27.1
+  '@types/estree':
+    specifier: ^1.0.5
+    version: 1.0.5
   prettier:
     specifier: ^3.1.1
     version: 3.1.1

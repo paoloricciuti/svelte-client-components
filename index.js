@@ -30,15 +30,12 @@ function transform(value) {
 	/**
 	 * @type {Map<string, string>}
 	 */
-	const variable_declarations = new Map();
+	const variables = new Map();
 
-	/**
-	 * @typedef {typeof parsed} Ast
-	 */
 	if (parsed.instance?.content) {
 		walk(
 			// this is to please ts, i think there's some problem with walk typing
-			/**@type {(Ast["instance"]&{})["content"]["body"][number]}*/ (
+			/**@type {import("estree").Node}*/ (
 				/** @type {unknown} */
 				(parsed.instance)
 			),
@@ -48,11 +45,15 @@ function transform(value) {
 					for (let declaration of node.declarations) {
 						if (declaration.init?.type === 'Identifier') {
 							if (declaration.id.type === 'Identifier') {
-								variable_declarations.set(
-									declaration.id.name,
-									declaration.init.name,
-								);
+								variables.set(declaration.id.name, declaration.init.name);
 							}
+						}
+					}
+				},
+				AssignmentExpression(node) {
+					if (node.right.type === 'Identifier') {
+						if (node.left.type === 'Identifier') {
+							variables.set(node.left.name, node.right.name);
 						}
 					}
 				},
@@ -68,7 +69,7 @@ function transform(value) {
 				},
 			},
 		);
-		for (const [variable_declaration, identifier] of variable_declarations.entries()) {
+		for (const [variable_declaration, identifier] of variables.entries()) {
 			if (client_components.has(identifier)) {
 				client_components.add(variable_declaration);
 			}

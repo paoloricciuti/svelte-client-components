@@ -27,7 +27,7 @@ Object.entries(
 			test: dir,
 		});
 	}
-	tests.get(dir)![expected] = content;
+	tests.get(dir)![expected] = content.trim();
 });
 
 describe('preprocessor', () => {
