@@ -1,22 +1,22 @@
 name: Run Tests
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
 jobs:
-  test:
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - uses: pnpm/action-setup@v2
-      with:
-          version: 8
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 18
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile
-    - name: Run tests
-      run: pnpm test
+    test:
+        timeout-minutes: 60
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: pnpm/action-setup@v2
+              with:
+                  version: 8
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: 18
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+            - name: Run tests
+              run: pnpm test:ci

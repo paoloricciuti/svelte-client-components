@@ -7,7 +7,12 @@
 	"scripts": {
 		"changeset": "changeset",
 		"changeset:publish": "changeset publish",
-		"test": "vitest"
+		"lint": "eslint .",
+		"lint:fix": "eslint --fix .",
+		"format": "prettier --check .",
+		"format:fix": "prettier --write .",
+		"test": "vitest",
+		"test:ci": "pnpm lint && pnpm format && pnpm test -- --run"
 	},
 	"keywords": [
 		"svelte",
@@ -29,6 +34,9 @@
 	"devDependencies": {
 		"@changesets/cli": "^2.27.1",
 		"@types/estree": "^1.0.5",
+		"@typescript-eslint/eslint-plugin": "^6.17.0",
+		"@typescript-eslint/parser": "^6.17.0",
+		"eslint": "^8.56.0",
 		"prettier": "^3.1.1",
 		"svelte": "^4.2.8",
 		"typescript": "^5.3.3",

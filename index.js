@@ -12,7 +12,9 @@ function wrap(mstr, start, end) {
 	try {
 		const snip = mstr.snip(start, end).toString();
 		mstr.overwrite(start, end, `{#await Promise.resolve() then}${snip}{/await}`);
-	} catch {}
+	} catch {
+		/* empty */
+	}
 }
 
 /**
