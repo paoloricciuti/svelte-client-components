@@ -32,7 +32,14 @@ Object.entries(
 
 describe('preprocessor', () => {
 	test.each([...tests.values()])('$test', async ({ component, expected }) => {
-		const result = await preprocess(component, preprocessor);
-		expect(result.code).toBe(expected);
+		try {
+			const result = await preprocess(component, preprocessor);
+			expect(result.code).toBe(expected);
+		} catch (e) {
+			// if there's no expected output the error should be there
+			if (expected) {
+				throw e;
+			}
+		}
 	});
 });

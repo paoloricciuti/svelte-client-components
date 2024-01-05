@@ -1,9 +1,9 @@
 <script>
-	import Test from './Test.client.svelte';
+	const Test = import('./Test.client.svelte');
 
 	const Test2 = Test;
 </script>
 
-{#await Promise.resolve() then}<Test2 />{/await}
+{#await Test2 then { default: Test2 }}<Test2 />{/await}
 
-{#await Promise.resolve() then}<svelte:component this={Test2} />{/await}
+{#await Test2 then { default: Test2 }}<svelte:component this={Test2} />{/await}

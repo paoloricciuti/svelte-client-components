@@ -1,5 +1,5 @@
 <script>
-	import Test from './Test.client.svelte';
+	const Test = import('./Test.client.svelte');
 </script>
 
-{#await Promise.resolve() then}<Test />{/await}{#await Promise.resolve() then}<Test />{/await}
+{#await Test then { default: Test }}<Test />{/await}{#await Test then { default: Test }}<Test />{/await}

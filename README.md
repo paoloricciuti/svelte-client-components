@@ -57,7 +57,7 @@ to annotate a component as a client component you can just use the extension `.c
 
 The preprocessor will be invoked before the svelte compiler and will change your code to prevent the component to be rendered during SSR. How? It make use of the fact that server svelte will not await Promises inside the `{#await}` block.
 
-Whenever you will use a Component that has `.client.svelte` in the import path it will be wrapped in an `await` block with a `Promise.resolve()` promise. This will ensure the fastest mount of the Component as soon as JS is available. Let's see a simple example.
+Whenever you will use a Component that has `.client.svelte` in the import path will be changed to a dynamic import and the usage will be wrapped in an `await` block to await that import. Let's see a simple example.
 
 This code
 
@@ -73,15 +73,15 @@ will be preprocessed to become this
 
 ```svelte
 <script>
-	import Test from './Test.client.svelte';
+	const Test = import('./Test.client.svelte');
 </script>
 
-{#await Promise.resolve() then}<Test />{/await}
+{#await Test then { default: Test }}<Test />{/await}
 ```
 
 ## Gotcha's
 
-As you have just read this preprocessor uses static analysis to do his job. This means that it has unfortunately some gotcha's. This is the cases that are currently tracked by the preprocessor
+As you have just read this preprocessor uses static analysis to do his job. This means that it has unfortunately some gotcha's. For example you cannot import anything else from the component file. This is not usual in svelte but it might happen if you export something from `<script context="module">`. This is the cases that are currently tracked by the preprocessor
 
 ### Basic import
 

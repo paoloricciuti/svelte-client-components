@@ -1,8 +1,8 @@
 <script>
-	import Test from './Test.client.svelte';
-	import Test2 from './Test2.client.svelte';
+	const Test = import('./Test.client.svelte');
+	const Test2 = import('./Test2.client.svelte');
 </script>
 
-{#await Promise.resolve() then}<Test2>
-	<Test />
+{#await Test2 then { default: Test2 }}<Test2>
+	{#await Test then { default: Test }}<Test />{/await}
 </Test2>{/await}

@@ -7,14 +7,28 @@ import MagicString from 'magic-string';
  * @param {MagicString} mstr
  * @param {number} start
  * @param {number} end
+ * @param {string} name
  */
-function wrap(mstr, start, end) {
+function wrap(mstr, start, end, name) {
 	try {
 		const snip = mstr.snip(start, end).toString();
-		mstr.overwrite(start, end, `{#await Promise.resolve() then}${snip}{/await}`);
-	} catch {
+		mstr.overwrite(start, end, `{#await ${name} then { default: ${name} }}${snip}{/await}`);
+	} catch (e) {
+		console.log(e);
 		/* empty */
 	}
+}
+
+/**
+ *
+ * @param {MagicString} mstr
+ * @param {number} start
+ * @param {number} end
+ * @param {string} name
+ * @param {string} source
+ */
+function change_import(mstr, start, end, name, source) {
+	mstr.overwrite(start, end, `const ${name} = import('${source}');`);
 }
 
 /**
@@ -37,7 +51,7 @@ function transform(value) {
 	if (parsed.instance?.content) {
 		walk(
 			// this is to please ts, i think there's some problem with walk typing
-			/**@type {import("estree").Node}*/ (
+			/**@type {import("estree").Node & {start: number, end: number}}*/ (
 				/** @type {unknown} */
 				(parsed.instance)
 			),
@@ -60,6 +74,17 @@ function transform(value) {
 						for (let imports of node.specifiers) {
 							if (imports.type === 'ImportDefaultSpecifier') {
 								client_components.add(imports.local.name);
+								change_import(
+									new_val,
+									node.start,
+									node.end,
+									imports.local.name,
+									source,
+								);
+							} else {
+								throw new Error(
+									"You can't import non default exports from client components",
+								);
 							}
 						}
 					}
@@ -76,14 +101,16 @@ function transform(value) {
 			{},
 			{
 				InlineComponent(node, { next }) {
+					// calling next before so that inner children are processed
+					// before this allowing magic string to actually replace
+					next();
 					if (
 						client_components.has(node.name) ||
 						// account for svelte:component
 						client_components.has(node.expression?.name)
 					) {
-						wrap(new_val, node.start, node.end);
+						wrap(new_val, node.start, node.end, node.expression?.name ?? node.name);
 					}
-					next();
 				},
 			},
 		);

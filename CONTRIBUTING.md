@@ -4,7 +4,7 @@ This is a very small project hence is not that difficult to contribute. The bulk
 
 After the parsing it proceed to `walk` the instance (which is the script tag) taking notes of:
 
--   Every component that contains `.client.svelte`
+-   Every component that contains `.client.svelte` (the static import will also be changed into a dynamic one)
 -   Every variable declaration that has an `init` of type `Identifier` (both the name of the declaration and of the `init` is stored)
 
 It then proceed to add every variable name where the `init` is present to the `Set` of client components to the `Set` of client components (basically if you are declaring a variable with a client component it add that variable name to the list of client components).

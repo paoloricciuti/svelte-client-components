@@ -4,4 +4,7 @@ declare module './*.svelte' {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	declare const component: ComponentType<SvelteComponent<any, any, any>>;
 	export default component;
+
+	declare const other_stuff:unknown;
+	export { other_stuff };
 }
