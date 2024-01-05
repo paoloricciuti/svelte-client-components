@@ -1,5 +1,11 @@
 # svelte-client-components
 
+## 0.1.0
+
+### Minor Changes
+
+- a7a9c10: BREAKING: change static import to dynamic and await the component
+
 ## 0.0.4
 
 ### Patch Changes
